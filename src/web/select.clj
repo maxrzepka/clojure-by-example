@@ -22,7 +22,9 @@
   "Replace all enlive symbols with full namespace"
   [form]
   (if-not (coll? form)
-    form
+    (if (enlive-functions form)
+      (symbol (str "net.cgrand.enlive-html/" (name form)))
+      form)
     (let [recurse #(walk fullify identity %)]
       (if-not (seq? form)
         (recurse form)
@@ -32,7 +34,6 @@
                   (recurse (rest form)))
             (case f quote form (recurse form)))
           )))))
-
 
 (defn str->clj
   [s]
@@ -46,24 +47,31 @@
     (nil? c) ""
     :else (pr-str c)))
 
+
 (defn nodes->str [nodes]
   (if (string? nodes) nodes
       (apply str (h/emit* (h/flatten-nodes-coll nodes)))))
+
+(defn snippet? [text]
+  (not (.startsWith text "http://")))
+
+(defn source->nodes [source]
+  (if (.startsWith source "http://")
+                   (h/html-resource (java.net.URL. source))
+                   (h/html-snippet source)))
 
 (defn select-nodes
   ""
   [selector text]
 ;;  (println "select-nodes--> " selector)
-  (let [resource (if (.startsWith text "http://")
-                   (h/html-resource (java.net.URL. text))
-                   (h/html-snippet text))]
-    (nodes->str
-     (h/select resource
-               (str->clj selector)))))
+  (nodes->str
+     (h/select (source->nodes text)
+               (str->clj selector))))
 
-;;
-;; How to load enlive functions
-;;
+(defn extract-nodes [selector extractor text]
+  ((str->clj extractor)
+   (h/select (source->nodes text) (str->clj selector))))
+
 (defn transform-nodes
   [selector trans text]
   (nodes->str
@@ -85,10 +93,9 @@
     :selector  "[[:a (attr-starts :href \"/\")]]"
     :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
    {:id "4pb" :title "4pb scraping"
-    :selector "[:div#prob-title]"
+    :selector "[:div#prob-title]" :transform "texts"
     :source "http://4clojure.com/problem/111"}
-   ]
-  )
+   ])
 
 ;; misc middleware
 (defn haz? [coll element] (boolean (some (conj #{} element) coll)))
@@ -171,8 +178,10 @@
 (defn append-selection
   [{:keys [selector transform source] :as params}]
   (try (let [selection (if (seq transform)
-                 (transform-nodes selector transform source)
-                 (select-nodes selector source))]
+                         (if (snippet? source)
+                           (transform-nodes selector transform source)
+                           (extract-nodes selector transform source))
+                         (select-nodes selector source))]
          (assoc params :selection selection))
        (catch Throwable t (assoc params :error (.getMessage t)))))
 
