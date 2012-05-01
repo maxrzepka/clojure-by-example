@@ -17,7 +17,7 @@
 
 (def enlive-functions (set (map first (ns-publics 'net.cgrand.enlive-html))))
 
-;;adapted from dotify of https://github.com/flatland/clojail/blob/master/src/clojail/core.clj
+;;adapted from dotify in https://github.com/flatland/clojail/blob/master/src/clojail/core.clj
 (defn- fullify
   "Replace all enlive symbols with full namespace"
   [form]
@@ -54,8 +54,12 @@
   ""
   [selector text]
 ;;  (println "select-nodes--> " selector)
-  (nodes->str (h/select (h/html-snippet text)
-                       (str->clj selector))))
+  (let [resource (if (.startsWith text "http://")
+                   (h/html-resource (java.net.URL. text))
+                   (h/html-snippet text))]
+    (nodes->str
+     (h/select resource
+               (str->clj selector)))))
 
 ;;
 ;; How to load enlive functions
@@ -79,7 +83,12 @@
     :source "<div>><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
    {:id "attrstart" :title "attr-starts"
     :selector  "[[:a (attr-starts :href \"/\")]]"
-    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}])
+    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
+   {:id "4pb" :title "4pb scraping"
+    :selector "[:div#prob-title]"
+    :source "http://4clojure.com/problem/111"}
+   ]
+  )
 
 ;; misc middleware
 (defn haz? [coll element] (boolean (some (conj #{} element) coll)))
@@ -167,11 +176,6 @@
          (assoc params :selection selection))
        (catch Throwable t (assoc params :error (.getMessage t)))))
 
-(comment
-  (let [result (if (seq transform)
-                 (transform-nodes selector transform source)
-                 (select-nodes selector source)) ]
-    (if (map? result) (merge params result) (assoc params :selection result))))
 
 (defn process-selection [{params :params :as req}]
 ;;  (println "process-selection--> " (pr-str params))
