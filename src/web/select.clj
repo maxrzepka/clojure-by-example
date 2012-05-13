@@ -35,6 +35,13 @@
             (case f quote form (recurse form)))
           )))))
 
+(defn- fullify1 [form]
+  (clojure.walk/postwalk
+   #(if (and (symbol? %) (enlive-functions %))
+      (symbol (str "net.cgrand.enlive-html/" (name %)))
+      %)
+   form))
+
 (defn str->clj
   [s]
   (if (string? s)
@@ -95,7 +102,24 @@
    {:id "4pb" :title "4pb scraping"
     :selector "[:div#prob-title]" :transform "texts"
     :source "http://4clojure.com/problem/111"}
+   {:id "takenotwhile" :title "take not while"
+    :description "any elements in div before ul"
+    :selector "[:div (pred #(not (= :ul (:tag %))))]"
+    :source "<div><span>some text</span><a>link</a><br><ul><li>item1</li></ul></div>"}
    ])
+
+;;how to get any nodes until ul  [:div (zip-pred #(not (= :ul (:tag %))))]
+
+(def sections
+  [{:code "selector" :title "Selectors"
+    :description ["Syntax similar to CSS to extract nodes from HMTL page.
+A selector is a vector of selector step : " [:div :a] " is selector with
+2 selector-steps and means any a element inside a div element. "
+ :> " is CSS child combinator "]     :sections [{:code "union" :description [{}]}]}
+   {:code "transformer" :title "Transformers"
+    :description "Functions for node transformation"}
+   ])
+
 
 ;; misc middleware
 (defn haz? [coll element] (boolean (some (conj #{} element) coll)))
@@ -160,7 +184,8 @@
   [:a] (h/do-> (h/set-attr :href (str "/" id))
                (h/content title)))
 
-(mydeftemplate index "select.html" [{:keys [error source transform selector selection]}]
+(mydeftemplate index "select.html"
+               [{:keys [error source transform selector selection]}]
                [:#navexamples] (h/content (mapcat nav-item examples))
                [:#i_selector] (h/set-attr :value (clj->str selector))
                [:#i_error] (if error (h/content error) (h/substitute ""))
@@ -173,6 +198,14 @@
 
 (defn find-example [id]
   (first (filter #(= id (:id %)) examples)))
+
+(def html-views
+  {:example index :section index :step index})
+
+(defn find-resource
+  "Returns adequate resource : section , example , function with specific view"
+  [id]
+  )
 
 ;;
 (defn append-selection
