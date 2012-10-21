@@ -66,7 +66,7 @@
    (h/transform (h/html-snippet text)
                 (str->clj selector)
                 (str->clj trans))))
-;;
+
 (def examples
   [{:id "simple" :title "Simple" :selector [:a]
     :source "<span><a>llll</a></span>"}
