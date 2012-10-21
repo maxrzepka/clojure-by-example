@@ -11,31 +11,12 @@
   (:require [net.cgrand.enlive-html :as h]))
 
 
-;;TODO how to handle compile error
-;;TODO how to inject full namespace in enlive function :
-;;         content --> net.cgrand.enlive-html/content
+;;To get all public functions in file order
+#_(map first (sort-by (comp :line meta second) (ns-publics 'clojure.walk)))
 
 (def enlive-functions (set (map first (ns-publics 'net.cgrand.enlive-html))))
 
-;;adapted from dotify in https://github.com/flatland/clojail/blob/master/src/clojail/core.clj
-(defn- fullify
-  "Replace all enlive symbols with full namespace"
-  [form]
-  (if-not (coll? form)
-    (if (enlive-functions form)
-      (symbol (str "net.cgrand.enlive-html/" (name form)))
-      form)
-    (let [recurse #(walk fullify identity %)]
-      (if-not (seq? form)
-        (recurse form)
-        (let [f (first form)]
-          (if (enlive-functions f)
-            (cons (symbol (str "net.cgrand.enlive-html/" (name f)))
-                  (recurse (rest form)))
-            (case f quote form (recurse form)))
-          )))))
-
-(defn- fullify1 [form]
+(defn fullify [form]
   (clojure.walk/postwalk
    #(if (and (symbol? %) (enlive-functions %))
       (symbol (str "net.cgrand.enlive-html/" (name %)))
@@ -155,7 +136,6 @@ A selector is a vector of selector step : " [:div :a] " is selector with
       (if (status-filter (:status res)) (logger entry))
       res)))
 
-
 ;; misc enlive utils
 (defn render [t]
   (apply str t))
@@ -199,15 +179,6 @@ A selector is a vector of selector step : " [:div :a] " is selector with
 (defn find-example [id]
   (first (filter #(= id (:id %)) examples)))
 
-(def html-views
-  {:example index :section index :step index})
-
-(defn find-resource
-  "Returns adequate resource : section , example , function with specific view"
-  [id]
-  )
-
-;;
 (defn append-selection
   [{:keys [selector transform source] :as params}]
   (try (let [selection (if (seq transform)
