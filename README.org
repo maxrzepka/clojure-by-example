@@ -1,0 +1,15 @@
+* Clojure By Example
+
+Discover clojure ecosystem through examples.
+
+** Description
+Simple web interface to show clojure examples in action :
+   - Examples are defined as clojure data
+   - Custom ReadEvalPrintLoop
+
+Currently enlive (templating library) is done as proof-of-concept and available
+on [[http://cold-dusk-9608.herokuapp.com/][heroku]]
+
+** FEATURES TODO
+   - Export example as plain clojure code
+   - Add more libraries : cascalog , core.logic ....
