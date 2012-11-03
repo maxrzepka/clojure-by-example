@@ -105,6 +105,16 @@ A selector is a vector of selector step : " [:div :a] " is selector with
 ;; misc middleware
 (defn haz? [coll element] (boolean (some (conj #{} element) coll)))
 ;;use pr-str instead of json-pr
+
+(defn build-logger [ouptut]
+  (cond
+   (= output :stdout) println
+   (= output :stderr) #(binding [*out* *err*]
+                         (println %))
+   (string? output) #(spit output (str % "\n") :append true)
+   (fn? output) output
+   :else identity))
+
 (defn wrap-logging
   "Ring middleware for request logging.
    Why JSON: http://journal.paul.querna.org/articles/2011/12/26/log-for-machines-in-json/
@@ -165,10 +175,13 @@ A selector is a vector of selector step : " [:div :a] " is selector with
                (h/content title)))
 
 (mydeftemplate index "select.html"
-               [{:keys [error source transform selector selection]}]
+               [{:keys [error trace source transform selector selection]}]
                [:#navexamples] (h/content (mapcat nav-item examples))
                [:#i_selector] (h/set-attr :value (clj->str selector))
                [:#i_error] (if error (h/content error) (h/substitute ""))
+               [:#i_trace] (if (and error trace)
+                             (h/content (clojure.string/join "\n" trace))
+                             (h/substitute ""))
                [:#i_transform] (h/set-attr :value transform)
                [:#i_source] (h/content source)
                [:#l_transform] (h/content transform)
@@ -187,7 +200,9 @@ A selector is a vector of selector step : " [:div :a] " is selector with
                            (extract-nodes selector transform source))
                          (select-nodes selector source))]
          (assoc params :selection selection))
-       (catch Throwable t (assoc params :error (.getMessage t)))))
+       (catch Throwable t (assoc params
+                            :error (.getMessage t)
+                            :trace (do () (.getStackTrace t))))))
 
 
 (defn process-selection [{params :params :as req}]
