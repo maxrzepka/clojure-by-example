@@ -106,15 +106,6 @@ A selector is a vector of selector step : " [:div :a] " is selector with
 (defn haz? [coll element] (boolean (some (conj #{} element) coll)))
 ;;use pr-str instead of json-pr
 
-(defn build-logger [ouptut]
-  (cond
-   (= output :stdout) println
-   (= output :stderr) #(binding [*out* *err*]
-                         (println %))
-   (string? output) #(spit output (str % "\n") :append true)
-   (fn? output) output
-   :else identity))
-
 (defn wrap-logging
   "Ring middleware for request logging.
    Why JSON: http://journal.paul.querna.org/articles/2011/12/26/log-for-machines-in-json/
@@ -202,7 +193,7 @@ A selector is a vector of selector step : " [:div :a] " is selector with
          (assoc params :selection selection))
        (catch Throwable t (assoc params
                             :error (.getMessage t)
-                            :trace (do () (.getStackTrace t))))))
+                            :trace (.getStackTrace t)))))
 
 
 (defn process-selection [{params :params :as req}]
