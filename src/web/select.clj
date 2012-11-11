@@ -8,7 +8,8 @@
         [ring.util.response :only [response file-response redirect]]
         [clojure.walk :only [walk]]
         [net.cgrand.moustache :only [app delegate]])
-  (:require [net.cgrand.enlive-html :as h]))
+  (:require [net.cgrand.enlive-html :as h])
+  (:gen-class))
 
 
 ;;To get all public functions in file order
@@ -70,16 +71,16 @@
 (def examples
   [{:id "simple" :title "Simple" :selector [:a]
     :source "<span><a>llll</a></span>"}
+   {:id "tagattr" :title "Tag/Attr"
+    :selector  "[[:a (attr= :href \"/\")]]"
+    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></li></div>"}
+   {:id "attrstart" :title "attr-starts"
+    :selector  "[[:a (attr-starts :href \"/\")]]"
+    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
    {:id "content" :title "Content" :selector [:a] :transform "(content \"hello\")"
     :source "<span><a>llll</a></span>"}
    {:id "fragment" :title "Fragment" :selector "{[:h1] [:p]}"
     :source "<div><h1>title</h1><h2>Sub title</h2><p>some text</p></div><h1>Another Title</h1>"}
-   {:id "tagattr" :title "Tag/Attr"
-    :selector  "[[:a (attr= :href \"/\")]]"
-    :source "<div>><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
-   {:id "attrstart" :title "attr-starts"
-    :selector  "[[:a (attr-starts :href \"/\")]]"
-    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
    {:id "4pb" :title "4pb scraping"
     :selector "[:div#prob-title]" :transform "texts"
     :source "http://4clojure.com/problem/111"}
@@ -213,8 +214,8 @@ A selector is a vector of selector step : " [:div :a] " is selector with
 (defn start [ & [port & options]]
   (run-jetty (var routes) {:port (or port 8080) :join? false}))
 
-(defn -main []
-  (let [port (try (Integer/parseInt (System/getenv "PORT"))
+(defn -main [& [port]]
+  (let [port (try (Integer/parseInt (if port port (System/getenv "PORT")))
                   (catch  Throwable t 8080))]
     (start port)))
 
