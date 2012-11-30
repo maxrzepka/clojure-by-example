@@ -71,13 +71,20 @@
 (def examples
   [{:id "simple" :title "Simple" :selector [:a]
     :source "<span><a>llll</a></span>"}
-   {:id "tagattr" :title "Tag/Attr"
-    :selector  "[[:a (attr= :href \"/\")]]"
-    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></li></div>"}
-   {:id "attrstart" :title "attr-starts"
-    :selector  "[[:a (attr-starts :href \"/\")]]"
-    :source "<div><a>ll1</a></li><li><a href=\"/\">index</a></div>"}
-   {:id "content" :title "Content" :selector [:a] :transform "(content \"hello\")"
+   {:id "inclusion" :title "Inclusion"
+    :selector  [:span :a]
+    :source "<div><a>lll</a><span><a>inner link</a></span></div>"}
+   {:id "conjunction" :title "Conjunction"
+    :description "inner [] means conjunction"
+    :selector  "[:li [:a (attr= :class \"special\")]]"
+    :source "<div><ul><li><a class=\"special\">ll1</a></li><li><a href=\"/\">index</a></li></ul></div>"}
+   {:id "but-node" :title "but-node"
+    :description "All nodes in div except <a> or <br>"
+    :selector "[:div (but-node #{:br :a})]"
+    :source "<h2>title</h2><div><span>blah</span><br/><a>Link</a></div>"}
+   {:id "content" :title "Content"
+    :description "Simple transformation : replace content of a tag"
+    :selector [:a] :transform "(content \"hello\")"
     :source "<span><a>llll</a></span>"}
    {:id "fragment" :title "Fragment" :selector "{[:h1] [:p]}"
     :source "<div><h1>title</h1><h2>Sub title</h2><p>some text</p></div><h1>Another Title</h1>"}
@@ -85,7 +92,7 @@
     :selector "[:div#prob-title]" :transform "texts"
     :source "http://4clojure.com/problem/111"}
    {:id "takenotwhile" :title "take not while"
-    :description "any elements in div before ul"
+    :description "Any elements in div before ul"
     :selector "[:div (pred #(not (= :ul (:tag %))))]"
     :source "<div><span>some text</span><a>link</a><br><ul><li>item1</li></ul></div>"}
    ])
@@ -167,10 +174,11 @@ A selector is a vector of selector step : " [:div :a] " is selector with
                (h/content title)))
 
 (mydeftemplate index "select.html"
-               [{:keys [error trace source transform selector selection]}]
+               [{:keys [error trace description source transform selector selection]}]
                [:#navexamples] (h/content (mapcat nav-item examples))
                [:#i_selector] (h/set-attr :value (clj->str selector))
                [:#i_error] (if error (h/content error) (h/substitute ""))
+               [:#i_desc] (if description (h/content description) (h/substitute ""))
                [:#i_trace] (if (and error trace)
                              (h/content (clojure.string/join "\n" trace))
                              (h/substitute ""))
@@ -215,9 +223,9 @@ A selector is a vector of selector step : " [:div :a] " is selector with
   (run-jetty (var routes) {:port (or port 8080) :join? false}))
 
 (defn -main [& [port]]
-  (let [port (try (Integer/parseInt (if port port (System/getenv "PORT")))
-                  (catch  Throwable t 8080))]
+  (let [port (try
+               (Integer/parseInt
+                (some identity
+                      [port (System/getenv "VMC_APP_PORT") (System/getenv "PORT")]))
+               (catch  Throwable t 8080))]
     (start port)))
-
-
-
