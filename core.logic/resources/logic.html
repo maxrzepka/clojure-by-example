@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>core.logic By Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+
+    <style type="text/css">
+      body {
+        padding-top: 10px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="container">
+     <div class="page-header">
+         <h2>core.logic By Example</h2>
+     </div>
+      <div class="row">
+        <div class="span2">
+          <div class="well sidebar-nav">
+            <ul id="navexamples" class="nav nav-list">
+              <li class="active"><a href="#">Latest</a></li>
+              <li><a href="#">Clojure</a></li>
+           </ul>
+          </div><!--/.well -->
+        </div>
+        <div class="span5">
+            <form method="post" id="" action="/">
+                <div id="i_error" class="well alert-error">Error here</div>
+                <div id="i_desc" class="well">Some desc</div>
+                <label class="control-label" for="source">Source
+                    <textarea class="input-xlarge" id="i_source" name="source" rows="5" cols="10">
+                    </textarea>
+                </label>
+                <button type="submit" class="btn">Run</button>
+            </form>
+	    </div>
+        <div class="span5">
+            <pre clas="prettyprint" id="l_source">...</pre>
+            <pre clas="prettyprint" id="l_solution">[]</pre>
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <div class="row">
+          <div class="span2"></div>
+          <div class="span10">
+              <div id="i_trace" class="well alert-error">Trace here</div>
+          </div>
+      </div>
+    </div><!--/.fluid-container-->
+
+  </body>
+</html>
