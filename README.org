@@ -3,17 +3,24 @@
 Discover clojure ecosystem through examples.
 
 ** Description
+
 Simple web interface to show clojure examples in action :
    - Examples are defined as clojure data
    - Custom ReadEvalPrintLoop
 
+The goal is to help people to quickly dive into the phase "Messing About"
+cf http://www.jeffbloom.net/docs/Hawkins-MessingAboutInSci.pdf .
+
 ** Usage
 
-Currently enlive (templating library) is done as proof-of-concept and available
-on [[http://cold-dusk-9608.herokuapp.com/][heroku]]
+   - enlive (templating library) is up-and-running on [[http://cold-dusk-9608.herokuapp.com/][heroku]] or [[http://logic-by-example.cloudfoundry.com/][cloudfoundry]]
+   - core.logic on [[http://logic-by-example.cloudfoundry.com/][cloudfoundry]]
 
-To run it locally `lein run`
+To run any project locally :
 
-** FEATURES TODO
-   - Export example as plain clojure code
-   - Add more libraries : cascalog , core.logic ....
+   - go to the project root folder
+   - run `lein run <port>`
+   - open your browser `http://localhost:<port>` (by default port is 8080).
+
+** TODO FEATURES TODO
+   - Export example as plain clojure code.
