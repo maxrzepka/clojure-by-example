@@ -130,7 +130,7 @@
 (defn solve
   "Returns solutions of a core.logic program"
   [s limit]
-  (eval `(l/run ~limit [~(read-string "q")] ~(fullify (read-string s)))))
+  (eval `(l/run ~limit [~'q] ~(fullify (read-string s)))))
 
 (defn run-example [{:keys [source limit] :or {limit 10} :as example}]
   (try
