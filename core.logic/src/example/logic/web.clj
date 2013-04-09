@@ -14,9 +14,6 @@
   (:gen-class))
 
 
-;;To get all public functions in file order
-#_(map first (sort-by (comp :line meta second) (ns-publics 'clojure.walk)))
-
 (def logic-functions (set (map first (ns-publics 'clojure.core.logic))))
 
 (defn fullify [form]
@@ -39,9 +36,9 @@
     :else (pr-str c)))
 
 (def examples
-  [{:id "simple" :title "Simple" :source "(== 3 q)"}
+  [{:id "simple" :title "Simple" :goal "(== 3 q)"}
    {:id "appendo" :title "Appendo"
-    :source "(appendo [1 2] q [1 2 3 4 5])" :usage ["appendo"]}]
+    :goal "(appendo [1 2] q [1 2 3 4 5])" :usage ["appendo"]}]
   )
 
 (def sections
@@ -110,15 +107,15 @@
                (h/content title)))
 
 (mydeftemplate index "logic.html"
-               [{:keys [error trace description source usage solution]}]
+               [{:keys [error trace description goal usage solution]}]
                [:#navexamples] (h/content (mapcat nav-item examples))
-               [:#i_source] (h/content (clj->str source))
+               [:#i_goal] (h/content (clj->str goal))
                [:#i_error] (if error (h/content error) (h/substitute ""))
                [:#i_desc] (if description (h/content description) (h/substitute ""))
                [:#i_trace] (if (and error trace)
                              (h/content (s/join "\n" trace))
                              (h/substitute ""))
-               [:#l_source] (h/content source)
+               [:#l_goal] (h/content goal)
                [:#l_solution] (h/content
                                (s/join "," (map #(if (seq? %) (vec %) %)
                                                 solution))))
@@ -132,9 +129,9 @@
   [s limit]
   (eval `(l/run ~limit [~'q] ~(fullify (read-string s)))))
 
-(defn run-example [{:keys [source limit] :or {limit 10} :as example}]
+(defn run-example [{:keys [goal limit] :or {limit 10} :as example}]
   (try
-    (assoc example :solution (solve source 10))
+    (assoc example :solution (solve goal 10))
     (catch Throwable t (assoc example
                          :error (.getMessage t)
                          :trace (.getStackTrace t)))))
