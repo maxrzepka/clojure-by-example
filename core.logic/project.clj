@@ -7,4 +7,7 @@
                  [org.clojure/core.logic "0.8.3"]
                  [enlive "1.1.1"]
                  [net.cgrand/moustache "1.2.0-alpha2"]
-                 [ring "1.1.8"]])
+                 [ring "1.1.8"]]
+  :uberjar-name "core.logic-by-example.jar"
+  ;:filespecs [{:type :paths :paths ["resources"]}]
+  :main example.logic.web)
