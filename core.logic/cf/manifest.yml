@@ -1,0 +1,15 @@
+--- 
+applications: 
+  .: 
+    instances: 1
+    command: java $JAVA_OPTS -cp core.logic-by-example.jar example.logic.web
+    name: core.logic-by-example
+    runtime: java7
+    framework: 
+      info: 
+        description: Standalone Application
+        exec: 
+        mem: 64M
+      name: standalone
+    url: ${name}.${target-base}
+    mem: 512M
