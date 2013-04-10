@@ -5,16 +5,23 @@
 An example is defined as plain data :
 
 ```clojure
-{:goal "(== 3 q)", :title "Simple", :id "simple"}
+{:goal "(== 3 q)" :title "Simple" :id "simple" :description "Simplest core.logic "}
 ```
 
-The examples are in [[resources/logic.clj]], so feel free to contribute.
+The examples are in [[core.logic/resources/logic.clj][logic.clj]], so feel free to contribute.
 
 ## Usage
 
-Latest version running on [http://logic-by-example.cloudfoundry.com/][cloudfoundry]
+Latest version running on [[http://logic-by-example.cloudfoundry.com/][cloudfoundry]]
 
 To start the server locally `lein run`
+
+## TODO
+
+   - Accept multiple goals.
+   - Accept complex bindings.
+   - Specify nb of solutions returned.
+   - Define custom function.
 
 ## License
 

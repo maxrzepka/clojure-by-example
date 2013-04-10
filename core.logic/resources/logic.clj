@@ -13,14 +13,20 @@
    (== x {:foo 1 :baz 1})
    (featurec x {:foo y :baz y}))"}
  {:id "in" :title "fd.in" :goal "(in q (interval 1 10))"}
+ {:id "alpha" :title "Alpha-equiv" :goal " (nom/fresh [a b]
+                   (l/== (lam a (lam b a))
+                       (lam b (lam a b))))
+"}
  {:id "mix" :title "Mix"
   :goal "(fresh [x y]
       (in y (interval 1 10))
       (== x {:foo {:bar y}})
       (featurec x {:foo {:bar q}})
       (in q (interval 1 3)))"}
- {:id "complex" :title "Complex" :goal "(fresh [x y z]
+ {:id "mix2" :title "Mix2" :goal
+  "(fresh [x y z]
 (in y (interval 1 3))
 (featurec x {:foo {:bar z}}
-          ) (in q (interval 1 3))) " }
+          ) (in q (interval 1 3)))" }
+; {:id    s d }
  ]

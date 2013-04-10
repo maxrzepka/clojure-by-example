@@ -13,7 +13,7 @@ cf http://www.jeffbloom.net/docs/Hawkins-MessingAboutInSci.pdf .
 
 ** Usage
 
-   - enlive (templating library) is up-and-running on [[http://cold-dusk-9608.herokuapp.com/][heroku]] or [[http://enlive-by-example.cloudfoundry.com/][cloudfoundry]]
+   - enlive (templating library) is up-and-running on [[http://cold-dusk-9608.herokuapp.com/][heroku]] or [[http://enlive-by-example.cloudfoundry.com/][cloudfoundry]];3P
    - core.logic on [[http://logic-by-example.cloudfoundry.com/][cloudfoundry]]
 
 To run any project locally :

@@ -11,7 +11,8 @@
   (:require [clojure.string :as s]
             [net.cgrand.enlive-html :as h]
             [clojure.core.logic :as l]
-            [clojure.core.logic.fd :as fd])
+            [clojure.core.logic.fd :as fd]
+            [clojure.core.logic.nominal :as n])
   (:gen-class))
 
 
@@ -21,23 +22,40 @@
 (def fd-functions
   (set (map first (ns-publics 'clojure.core.logic.fd))))
 
+(def nominal-functions
+  (set (map first (ns-publics 'clojure.core.logic.nominal))))
+
+(defn lam [x e] `(~'fn ~(n/tie x e)))
+
+(def custom-functions #{'lam})
+
+(def names {:n "clojure.core.logic.nominal"
+            :l "clojure.core.logic"
+            :c "example.logic.web"
+            :f "clojure.core.logic.fd"})
+
+(defn find-namespace [s]
+  (if (symbol? s)
+    (if (namespace s)
+      (names (-> s namespace first str keyword))
+      (cond (logic-functions s) (:n names)
+            (fd-functions s) (:f names)
+            (nominal-functions s) (:n names)
+            (custom-functions s) (:c names)))))
+
 (defn fullify [form]
   (clojure.walk/postwalk
-   #(if (and (symbol? %)
-             )
-      (cond
-       (logic-functions %)
-       (symbol (str "clojure.core.logic/" (name %)))
-       (fd-functions %)
-       (symbol (str "clojure.core.logic.fd/" (name %)))
-       :else %)
-      %)
+   (fn [s]
+     (if-let [ns1 (find-namespace s)]
+             (symbol (str ns1 "/" (name s)))
+             s))
    form))
 
 (defn str->clj
   [s]
   (if (string? s)
-    (eval `~(fullify (read-string s)))
+    (fullify (read-string s))
+    ;(eval `~(fullify (read-string s)))
     s))
 
 (defn clj->str [c]
