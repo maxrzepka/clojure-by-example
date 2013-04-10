@@ -10,16 +10,27 @@
         [net.cgrand.moustache :only [app delegate]])
   (:require [clojure.string :as s]
             [net.cgrand.enlive-html :as h]
-            [clojure.core.logic :as l])
+            [clojure.core.logic :as l]
+            [clojure.core.logic.fd :as fd])
   (:gen-class))
 
 
-(def logic-functions (set (map first (ns-publics 'clojure.core.logic))))
+(def logic-functions
+  (set (map first (ns-publics 'clojure.core.logic))))
+
+(def fd-functions
+  (set (map first (ns-publics 'clojure.core.logic.fd))))
 
 (defn fullify [form]
   (clojure.walk/postwalk
-   #(if (and (symbol? %) (logic-functions %))
-      (symbol (str "clojure.core.logic/" (name %)))
+   #(if (and (symbol? %)
+             )
+      (cond
+       (logic-functions %)
+       (symbol (str "clojure.core.logic/" (name %)))
+       (fd-functions %)
+       (symbol (str "clojure.core.logic.fd/" (name %)))
+       :else %)
       %)
    form))
 
@@ -115,8 +126,11 @@
                              (h/substitute ""))
                [:#l_goal] (h/content goal)
                [:#l_solution] (h/content
-                               (s/join "," (map #(if (seq? %) (vec %) %)
-                                                solution))))
+                               (s/join ","
+                                       (if (seq? solution)
+                                         (map #(if (seq? %) (vec %) %)
+                                              solution)
+                                         [(str solution)]))))
 
 ;; Business Logic
 (defn find-example [id]
