@@ -38,7 +38,7 @@
   (if (symbol? s)
     (if (namespace s)
       (names (-> s namespace first str keyword))
-      (cond (logic-functions s) (:n names)
+      (cond (logic-functions s) (:l names)
             (fd-functions s) (:f names)
             (nominal-functions s) (:n names)
             (custom-functions s) (:c names)))))
