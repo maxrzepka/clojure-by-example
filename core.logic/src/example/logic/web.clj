@@ -155,9 +155,9 @@
   (first (filter #(= id (:id %)) examples)))
 
 (defn solve
-  "Returns solutions of a core.logic program"
+  "Returns solutions of a core.logic program (ie one or several goals)"
   [s limit]
-  (eval `(l/run ~limit [~'q] ~(fullify (read-string s)))))
+  (eval `(l/run ~limit [~'q] ~@(fullify (read-string (str "(" s ")"))))))
 
 (defn run-example [{:keys [goal limit] :or {limit 10} :as example}]
   (try
