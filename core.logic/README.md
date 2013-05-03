@@ -8,17 +8,16 @@ An example is defined as plain data :
 {:goal "(== 3 q)" :title "Simple" :id "simple" :description "Simplest core.logic "}
 ```
 
-The examples are in [[core.logic/resources/logic.clj][logic.clj]], so feel free to contribute.
+The examples are in [logic.clj](https://github.com/maxrzepka/clojure-by-example/blob/master/core.logic/resources/logic.clj), so feel free to contribute.
 
 ## Usage
 
-Latest version running on [[http://logic-by-example.cloudfoundry.com/][cloudfoundry]]
+Latest version running on [cloudfoundry](http://logic-by-example.cloudfoundry.com/)
 
 To start the server locally `lein run`
 
 ## TODO
 
-   - Accept multiple goals.
    - Accept complex bindings.
    - Specify nb of solutions returned.
    - Define custom function.
