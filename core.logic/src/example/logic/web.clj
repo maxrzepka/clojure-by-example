@@ -65,8 +65,7 @@
     :else (pr-str c)))
 
 (def examples
-  (read-string (slurp "resources/logic.clj"))
-  )
+  (read-string (slurp "resources/logic.clj")))
 
 (def sections
   [])
@@ -142,7 +141,7 @@
                [:#i_trace] (if (and error trace)
                              (h/content (s/join "\n" trace))
                              (h/substitute ""))
-               [:#l_goal] (h/content goal)
+               [:#l_goal] (h/content (clj->str goal))
                [:#l_solution] (h/content
                                (s/join ","
                                        (if (seq? solution)
@@ -156,8 +155,9 @@
 
 (defn solve
   "Returns solutions of a core.logic program (ie one or several goals)"
-  [s limit]
-  (eval `(l/run ~limit [~'q] ~@(fullify (read-string (str "(" s ")"))))))
+  [goal limit]
+  (let [g (read-string (str "(" (if-not (string? goal) (str goal) goal) ")"))]
+    (eval `(l/run ~limit [~'q] ~@(fullify g)))))
 
 (defn run-example [{:keys [goal limit] :or {limit 10} :as example}]
   (try
