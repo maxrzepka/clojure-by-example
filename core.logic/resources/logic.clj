@@ -8,7 +8,16 @@
  {:id "membero1" :title "RecMembero" :goal (membero 'cat q)}
 
  {:id "conde" :title "Conde" :goal (conde [(== q 'tea)] [(== q 'coffee)])}
- {:id "featurec" :title "Featurec"
+ {:id "featurec1" :title "Featurec1"
+  :description "coming from http://michaelrbernste.in/2013/05/12/featurec-and-maps.html"
+  :goal "(featurec q {:foo 1})
+         (== q {:foo 1 :bar 2})"}
+ {:id "featurec2" :title "Featurec2"
+  :description "coming from http://michaelrbernste.in/2013/05/12/featurec-and-maps.html"
+  :goal (fresh [x]
+               (featurec x {:foo q})
+               (== x {:foo 1}))}         
+ {:id "featurec3" :title "Featurec3"
   :goal (fresh [x y]
    (== x {:foo 1 :baz 1})
    (featurec x {:foo y :baz y}))}
