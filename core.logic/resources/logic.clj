@@ -25,8 +25,8 @@
  {:id "equal" :title "fd.equal"
   :description "Resolve a linear equation code written by @swannodette https://github.com/swannodette/zrch-logic/blob/master/src/zrch_logic/core.clj"
   :lvar "x y"
-  :goal "(fd/in x y (fd/interval 0 9))
-    (fd/eq
+  :goal "(in x y (interval 0 9))
+    (eq
       (= (+ x y) 9)
       (= (+ (* x 2) (* y 4)) 24))"}
   {:id "alpha" :title "Alpha-equiv"
