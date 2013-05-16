@@ -20,7 +20,8 @@
   (set (map first (ns-publics 'clojure.core.logic))))
 
 (def fd-functions
-  (set (map first (ns-publics 'clojure.core.logic.fd))))
+  (disj (set (map first (ns-publics 'clojure.core.logic.fd)))
+        '= '+ '* '/))
 
 (def nominal-functions
   (set (map first (ns-publics 'clojure.core.logic.nominal))))
@@ -58,10 +59,10 @@
   "convert http url into HMTL a tag"
   [st]
   (h/html
-   (mapv (fn [w] (if (.startsWith w "http")
+   (mapv (fn [w] (if (and (string? w) (.startsWith w "http"))
                   [:a {:href w} (extract-name w)]
                   w))
-         (interleave (s/split st #"\s+") (repeat " ")))))
+         (cons :span (interleave (s/split st #"\s+") (repeat " "))))))
 
 (defn str->clj
   [s]
@@ -139,14 +140,16 @@
      [[:link (h/attr= :rel "stylesheet")]] (prepend-attrs :href "/")
      ~@forms))
 
+(declare logic->clj)
 (h/defsnippet nav-item "logic.html" [:#navexamples [:li (h/nth-of-type 2)]]
   [{:keys [title id]}]
   [:a] (h/do-> (h/set-attr :href (str "/" id))
                (h/content title)))
 
 (mydeftemplate index "logic.html"
-               [{:keys [error trace description goal usage solution]}]
+               [{:keys [error trace description goal usage lvar solution] :or {lvar "q"}}]
                [:#navexamples] (h/content (mapcat nav-item examples))
+               [:#i_lvar] (h/set-attr :value (clj->str lvar))
                [:#i_goal] (h/content (clj->str goal))
                [:#i_error] (if error (h/content error) (h/substitute ""))
                [:#i_desc] (if description (-> description str->html h/content)
@@ -166,15 +169,25 @@
 (defn find-example [id]
   (first (filter #(= id (:id %)) examples)))
 
+(defn logic->clj
+  ([goal] (logic->clj goal 'q 10))
+  ([goal lvar limit]
+     (let [g (read-string
+              (str "(" (if-not (string? goal) (str goal) goal) ")"))
+           l (cond
+              (string? lvar) (map symbol (s/split lvar #"[ ;,]+"))
+              (not (seq? lvar)) [lvar]
+              :else lvar)]
+       `(l/run ~limit [~@l] ~@(fullify g)))))
+
 (defn solve
   "Returns solutions of a core.logic program (ie one or several goals)"
-  [goal limit]
-  (let [g (read-string (str "(" (if-not (string? goal) (str goal) goal) ")"))]
-    (eval `(l/run ~limit [~'q] ~@(fullify g)))))
+  [goal lvar limit]
+  (eval (logic->clj goal lvar limit)))
 
-(defn run-example [{:keys [goal limit] :or {limit 10} :as example}]
+(defn run-example [{:keys [goal limit lvar] :or {lvar 'q limit 10} :as example}]
   (try
-    (assoc example :solution (solve goal 10))
+    (assoc example :solution (solve goal lvar limit))
     (catch Throwable t (assoc example
                          :error (.getMessage t)
                          :trace (.getStackTrace t)))))

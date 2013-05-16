@@ -22,6 +22,13 @@
    (== x {:foo 1 :baz 1})
    (featurec x {:foo y :baz y}))}
  {:id "in" :title "fd.in" :goal (in q (interval 1 10))}
+ {:id "equal" :title "fd.equal"
+  :description "Resolve a linear equation code written by @swannodette https://github.com/swannodette/zrch-logic/blob/master/src/zrch_logic/core.clj"
+  :lvar "x y"
+  :goal "(fd/in x y (fd/interval 0 9))
+    (fd/eq
+      (= (+ x y) 9)
+      (= (+ (* x 2) (* y 4)) 24))"}
   {:id "alpha" :title "Alpha-equiv"
    :goal  (nom/fresh [a b]
                    (l/== (lam a (lam b a))

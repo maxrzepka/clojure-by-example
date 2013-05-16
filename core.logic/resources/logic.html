@@ -21,6 +21,11 @@
         padding-top: 10px;
         padding-bottom: 40px;
       }
+      .center {
+      float: none;
+      margin-left: auto;
+      margin-right: auto;
+      }
       .sidebar-nav {
         padding: 9px 0;
       }
@@ -43,15 +48,21 @@
           </div><!--/.well -->
         </div>
         <div class="span5">
-            <form method="post" id="" action="/">
+                <form method="post" id="" action="/">
                 <div id="i_error" class="well alert-error">Error here</div>
                 <div id="i_desc" class="well">Some desc <a>link</a></div>
-                <label class="control-label" for="goal">Goal
+
+                  <div class="control-group">                
+                      Goal <input type="text" id="i_lvar" class="input-small" size="3" name="lvar" value=""/> 
                     <textarea class="input-xlarge" id="i_goal" name="goal" rows="5" cols="10">
                     </textarea>
-                </label>
-                <button type="submit" class="btn">Kick</button>
-            </form>
+                  </div>
+                  <div class="control-group">
+                    <div class="controls">
+                      <button type="submit" class="btn">Kick</button>
+                    </div>
+                  </div>
+                </form>
 	    </div>
         <div class="span5">
             <pre clas="prettyprint" id="l_goal">...</pre>
@@ -65,7 +76,11 @@
               <div id="i_trace" class="well alert-error">Trace here</div>
           </div>
       </div>
+      <footer class="span7 center row">Maximilien Rzepka 
+<a href="https://github.com/maxrzepka/clojure-by-example/tree/master/core.logic">@Github</a> 
+<a href="http://twitter.com/maxrzepka">@twitter</a>
+      </footer>
+      
     </div><!--/.fluid-container-->
-
   </body>
 </html>
