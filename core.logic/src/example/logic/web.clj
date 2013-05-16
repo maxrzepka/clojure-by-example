@@ -51,6 +51,18 @@
              s))
    form))
 
+(defn extract-name [^String s]
+  (-> s (s/split #"\/+") last (s/split #"\.") first))
+
+(defn str->html
+  "convert http url into HMTL a tag"
+  [st]
+  (h/html
+   (mapv (fn [w] (if (.startsWith w "http")
+                  [:a {:href w} (extract-name w)]
+                  w))
+         (interleave (s/split st #"\s+") (repeat " ")))))
+
 (defn str->clj
   [s]
   (if (string? s)
@@ -137,7 +149,8 @@
                [:#navexamples] (h/content (mapcat nav-item examples))
                [:#i_goal] (h/content (clj->str goal))
                [:#i_error] (if error (h/content error) (h/substitute ""))
-               [:#i_desc] (if description (h/content description) (h/substitute ""))
+               [:#i_desc] (if description (-> description str->html h/content)
+                              (h/substitute ""))
                [:#i_trace] (if (and error trace)
                              (h/content (s/join "\n" trace))
                              (h/substitute ""))
