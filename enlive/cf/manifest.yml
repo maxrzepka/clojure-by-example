@@ -11,5 +11,5 @@ applications:
     name: enlive-by-example
     runtime: java7
     mem: 512M
-    command: java $JAVA_OPTS -cp clojure-by-example-1.0.0-SNAPSHOT-standalone.jar web.select
+    command: java $JAVA_OPTS -cp enlive-by-example.jar example.enlive.web
     url: ${name}.${target-base}
